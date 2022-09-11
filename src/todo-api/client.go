@@ -1,5 +1,9 @@
 package main
 
+/*
+	This is where Gin / Fiber API routes will be created to call other microservice !
+*/
+
 import (
 	"context"
 	"fmt"

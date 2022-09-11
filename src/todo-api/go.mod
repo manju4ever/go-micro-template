@@ -1,4 +1,4 @@
-module hello-client
+module todo-api
 
 go 1.16
 
