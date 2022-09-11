@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    ports:
+      - "5632:5632"
+  nats:
+    image: nats
+    ports:
+      - "4222:4222"
+      - "6222:6222"
