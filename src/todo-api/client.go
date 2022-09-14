@@ -7,11 +7,12 @@ package main
 import (
 	"context"
 	"fmt"
+	schema "helloworld/proto"
+
 	natsbroker "github.com/go-micro/plugins/v4/broker/nats"
 	natsregistry "github.com/go-micro/plugins/v4/registry/nats"
 	natsport "github.com/go-micro/plugins/v4/transport/nats"
 	micro "go-micro.dev/v4"
-	schema "helloworld/proto"
 )
 
 func main() {
