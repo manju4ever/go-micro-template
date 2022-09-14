@@ -5,6 +5,7 @@ import (
 	natsr "github.com/go-micro/plugins/v4/registry/nats"
 	natst "github.com/go-micro/plugins/v4/transport/nats"
 
+	TodoController "todo-service/controllers"
 	"todo-service/handler"
 	pb "todo-service/proto"
 
@@ -28,6 +29,8 @@ func main() {
 		micro.Transport(natst.NewTransport()),
 	)
 	srv.Init()
+
+	TodoController.InitDB()
 
 	// Register handler
 	pb.RegisterTodoServiceHandler(srv.Server(), new(handler.TodoService))
