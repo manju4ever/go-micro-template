@@ -7,10 +7,11 @@ package main
 import (
 	"context"
 	"fmt"
-	schema "helloworld/proto"
+
+	Schema "todoservice/proto"
 
 	natsbroker "github.com/go-micro/plugins/v4/broker/nats"
-	natsregistry "github.com/go-micro/plugins/v4/registry/nats"
+	natsregistry "github.co`m/go-micro/plugins/v4/registry/nats"
 	natsport "github.com/go-micro/plugins/v4/transport/nats"
 	micro "go-micro.dev/v4"
 )
@@ -23,12 +24,16 @@ func main() {
 	)
 	service.Init()
 	client := service.Client()
-	req := client.NewRequest("hello-world", "HelloWorld.Call", &schema.CallRequest{Name: "Manju"})
-	res := &schema.CallResponse{}
+	req := client.NewRequest("todo-service", "TodoService.GetAllTodos", &Schema.Void{})
+	res := &Schema.AllTodoItems{}
 	ctx := context.Background()
 	if err := client.Call(ctx, req, res); err != nil {
-		fmt.Println("Something is wrong:", err, res)
+		fmt.Println("[Error] ", err, res)
 		return
 	}
-	fmt.Println(res)
+
+	for _, item := range res.Items {
+		fmt.Println(item)
+	}
+
 }

@@ -28,7 +28,7 @@ func InitializeDB() (instance *gorm.DB) {
 	return dbInstance
 }
 
-func CreateNewItem(item Schema.TodoItem) (status bool, err error) {
+func CreateNewTodo(item Schema.TodoItem) (status bool, err error) {
 	dbInstance.Create(&TodoItemDB{Item: item})
 	return true, nil
 }
@@ -38,7 +38,7 @@ func UpdateItemStatus(itemId int, newStatus string) (status bool, err error) {
 	return true, nil
 }
 
-func GetAllItems() (items []TodoItemDB, err error) {
+func GetAllTodos() (items []TodoItemDB, err error) {
 	var allItems []TodoItemDB
 	dbInstance.Model(TodoItemDB{}).Find(&allItems)
 	for _, exact := range allItems {

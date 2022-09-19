@@ -8,6 +8,10 @@ import (
 	log "go-micro.dev/v4/logger"
 
 	pb "todo-service/proto"
+
+	controller "todo-service/controllers"
+
+	Schema "todo-service/models"
 )
 
 type TodoService struct{}
@@ -15,6 +19,22 @@ type TodoService struct{}
 func (e *TodoService) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
 	log.Infof("Received TodoService.Call request: %v", req)
 	rsp.Msg = "Namaste " + req.Name
+	return nil
+}
+
+func (e *TodoService) CreateNewTodo(ctx context.Context, req *pb.TodoItem, rsp *pb.CallResponse) error {
+	log.Infof("Received TodoService.CreateNewTodo request: %v", req)
+	controller.CreateNewTodo(Schema.TodoItem{
+		Text:  req.Text,
+		Tags:  *req.Tags,
+		Color: *req.Color,
+	})
+	rsp.Msg = "Understood the Request"
+	return nil
+}
+
+func (e *TodoService) GetAllTodos(ctx context.Context, req *pb.Void, rsp *pb.AllTodoItems) error {
+	log.Infof("Received TodoService.GetAllTodos request: %v", req)
 	return nil
 }
 

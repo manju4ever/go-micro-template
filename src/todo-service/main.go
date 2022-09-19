@@ -1,6 +1,10 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"time"
+
 	"go-micro.dev/v4"
 	log "go-micro.dev/v4/logger"
 
@@ -10,7 +14,6 @@ import (
 
 	TodoController "todo-service/controllers"
 	"todo-service/handler"
-	Schema "todo-service/models"
 	pb "todo-service/proto"
 )
 
@@ -29,12 +32,25 @@ func main() {
 		micro.Transport(natst.NewTransport()),
 	)
 	srv.Init()
+	TodoController.InitializeDB()
+
 	if err := srv.Run(); err != nil {
 		log.Fatal(err)
 	}
 	pb.RegisterTodoServiceHandler(srv.Server(), new(handler.TodoService))
-	TodoController.InitializeDB()
-	TodoController.CreateNewItem(Schema.TodoItem{Text: "Read some stuff", Status: "in-progress", Tags: "reading, writing"})
-	TodoController.UpdateItemStatus(14, "done")
-	TodoController.GetAllItems()
+
+	time.Sleep(time.Second * 4)
+
+	client := srv.Client()
+	req := client.NewRequest("todo-service", "TodoService.GetAllTodos", &pb.Void{})
+	res := &pb.AllTodoItems{}
+	ctx := context.Background()
+	if err := client.Call(ctx, req, res); err != nil {
+		fmt.Println("[Error] ", err, res)
+		return
+	}
+
+	for _, item := range res.Items {
+		fmt.Println(item)
+	}
 }
