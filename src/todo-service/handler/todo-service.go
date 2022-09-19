@@ -8,10 +8,6 @@ import (
 	log "go-micro.dev/v4/logger"
 
 	pb "todo-service/proto"
-
-	controller "todo-service/controllers"
-
-	Schema "todo-service/models"
 )
 
 type TodoService struct{}
@@ -22,21 +18,22 @@ func (e *TodoService) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.Cal
 	return nil
 }
 
-func (e *TodoService) CreateNewTodo(ctx context.Context, req *pb.TodoItem, rsp *pb.CallResponse) error {
-	log.Infof("Received TodoService.CreateNewTodo request: %v", req)
-	controller.CreateNewTodo(Schema.TodoItem{
-		Text:  req.Text,
-		Tags:  *req.Tags,
-		Color: *req.Color,
-	})
-	rsp.Msg = "Understood the Request"
-	return nil
-}
+// func (e *TodoService) CreateNewTodo(ctx context.Context, req *pb.TodoItem, rsp *pb.CallResponse) error {
+// 	log.Infof("Received TodoService.CreateNewTodo request: %v", req)
+// 	controller.CreateNewTodo(Schema.TodoItem{
+// 		Text:  req.Text,
+// 		Tags:  req.Tags,
+// 		Color: req.Color,
+// 	})
+// 	rsp.Msg = "Understood the Request !"
+// 	return nil
+// }
 
-func (e *TodoService) GetAllTodos(ctx context.Context, req *pb.Void, rsp *pb.AllTodoItems) error {
-	log.Infof("Received TodoService.GetAllTodos request: %v", req)
-	return nil
-}
+// func (e *TodoService) GetAllTodos(ctx context.Context, req *pb.Void, rsp *pb.AllTodoItems) error {
+// 	log.Infof("Received TodoService.GetAllTodos request: %v", req)
+// 	rsp.Items = []*pb.TodoItem{&pb.TodoItem{Text: "Hello", Color: "Yellow", Tags: "world"}}
+// 	return nil
+// }
 
 func (e *TodoService) ClientStream(ctx context.Context, stream pb.TodoService_ClientStreamStream) error {
 	var count int64

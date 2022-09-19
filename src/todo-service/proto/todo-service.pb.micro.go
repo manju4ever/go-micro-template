@@ -37,8 +37,6 @@ func NewTodoServiceEndpoints() []*api.Endpoint {
 
 type TodoService interface {
 	Call(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error)
-	CreateNewTodo(ctx context.Context, in *TodoItem, opts ...client.CallOption) (*CallResponse, error)
-	GetAllTodos(ctx context.Context, in *Void, opts ...client.CallOption) (*AllTodoItems, error)
 	ClientStream(ctx context.Context, opts ...client.CallOption) (TodoService_ClientStreamService, error)
 	ServerStream(ctx context.Context, in *ServerStreamRequest, opts ...client.CallOption) (TodoService_ServerStreamService, error)
 	BidiStream(ctx context.Context, opts ...client.CallOption) (TodoService_BidiStreamService, error)
@@ -66,26 +64,6 @@ func (c *todoService) Call(ctx context.Context, in *CallRequest, opts ...client.
 	return out, nil
 }
 
-func (c *todoService) CreateNewTodo(ctx context.Context, in *TodoItem, opts ...client.CallOption) (*CallResponse, error) {
-	req := c.c.NewRequest(c.name, "TodoService.CreateNewTodo", in)
-	out := new(CallResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *todoService) GetAllTodos(ctx context.Context, in *Void, opts ...client.CallOption) (*AllTodoItems, error) {
-	req := c.c.NewRequest(c.name, "TodoService.GetAllTodos", in)
-	out := new(AllTodoItems)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *todoService) ClientStream(ctx context.Context, opts ...client.CallOption) (TodoService_ClientStreamService, error) {
 	req := c.c.NewRequest(c.name, "TodoService.ClientStream", &ClientStreamRequest{})
 	stream, err := c.c.Stream(ctx, req, opts...)
@@ -99,12 +77,17 @@ type TodoService_ClientStreamService interface {
 	Context() context.Context
 	SendMsg(interface{}) error
 	RecvMsg(interface{}) error
+	CloseSend() error
 	Close() error
 	Send(*ClientStreamRequest) error
 }
 
 type todoServiceClientStream struct {
 	stream client.Stream
+}
+
+func (x *todoServiceClientStream) CloseSend() error {
+	return x.stream.CloseSend()
 }
 
 func (x *todoServiceClientStream) Close() error {
@@ -143,12 +126,17 @@ type TodoService_ServerStreamService interface {
 	Context() context.Context
 	SendMsg(interface{}) error
 	RecvMsg(interface{}) error
+	CloseSend() error
 	Close() error
 	Recv() (*ServerStreamResponse, error)
 }
 
 type todoServiceServerStream struct {
 	stream client.Stream
+}
+
+func (x *todoServiceServerStream) CloseSend() error {
+	return x.stream.CloseSend()
 }
 
 func (x *todoServiceServerStream) Close() error {
@@ -189,6 +177,7 @@ type TodoService_BidiStreamService interface {
 	Context() context.Context
 	SendMsg(interface{}) error
 	RecvMsg(interface{}) error
+	CloseSend() error
 	Close() error
 	Send(*BidiStreamRequest) error
 	Recv() (*BidiStreamResponse, error)
@@ -196,6 +185,10 @@ type TodoService_BidiStreamService interface {
 
 type todoServiceBidiStream struct {
 	stream client.Stream
+}
+
+func (x *todoServiceBidiStream) CloseSend() error {
+	return x.stream.CloseSend()
 }
 
 func (x *todoServiceBidiStream) Close() error {
@@ -231,8 +224,6 @@ func (x *todoServiceBidiStream) Recv() (*BidiStreamResponse, error) {
 
 type TodoServiceHandler interface {
 	Call(context.Context, *CallRequest, *CallResponse) error
-	CreateNewTodo(context.Context, *TodoItem, *CallResponse) error
-	GetAllTodos(context.Context, *Void, *AllTodoItems) error
 	ClientStream(context.Context, TodoService_ClientStreamStream) error
 	ServerStream(context.Context, *ServerStreamRequest, TodoService_ServerStreamStream) error
 	BidiStream(context.Context, TodoService_BidiStreamStream) error
@@ -241,8 +232,6 @@ type TodoServiceHandler interface {
 func RegisterTodoServiceHandler(s server.Server, hdlr TodoServiceHandler, opts ...server.HandlerOption) error {
 	type todoService interface {
 		Call(ctx context.Context, in *CallRequest, out *CallResponse) error
-		CreateNewTodo(ctx context.Context, in *TodoItem, out *CallResponse) error
-		GetAllTodos(ctx context.Context, in *Void, out *AllTodoItems) error
 		ClientStream(ctx context.Context, stream server.Stream) error
 		ServerStream(ctx context.Context, stream server.Stream) error
 		BidiStream(ctx context.Context, stream server.Stream) error
@@ -260,14 +249,6 @@ type todoServiceHandler struct {
 
 func (h *todoServiceHandler) Call(ctx context.Context, in *CallRequest, out *CallResponse) error {
 	return h.TodoServiceHandler.Call(ctx, in, out)
-}
-
-func (h *todoServiceHandler) CreateNewTodo(ctx context.Context, in *TodoItem, out *CallResponse) error {
-	return h.TodoServiceHandler.CreateNewTodo(ctx, in, out)
-}
-
-func (h *todoServiceHandler) GetAllTodos(ctx context.Context, in *Void, out *AllTodoItems) error {
-	return h.TodoServiceHandler.GetAllTodos(ctx, in, out)
 }
 
 func (h *todoServiceHandler) ClientStream(ctx context.Context, stream server.Stream) error {

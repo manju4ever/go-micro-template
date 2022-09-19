@@ -6,25 +6,9 @@ option go_package = "./proto;todoservice";
 
 service TodoService {
 	rpc Call(CallRequest) returns (CallResponse) {}
-	rpc CreateNewTodo(TodoItem) returns(CallResponse) {}
-	rpc GetAllTodos(Void) returns(AllTodoItems) {}
 	rpc ClientStream(stream ClientStreamRequest) returns (ClientStreamResponse) {}
 	rpc ServerStream(ServerStreamRequest) returns (stream ServerStreamResponse) {}
 	rpc BidiStream(stream BidiStreamRequest) returns (stream BidiStreamResponse) {}
-}
-
-message Void {}
-
-message TodoItem {
-	string text = 1;
-	optional string tags = 2;
-	optional string color = 3;
-}
-
-message AllTodoItems {
-	repeated TodoItem items = 1;
-	optional string msg = 2;
-	optional string status = 3;
 }
 
 message CallRequest {
