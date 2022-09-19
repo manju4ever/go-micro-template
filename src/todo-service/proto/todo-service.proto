@@ -11,6 +11,11 @@ service TodoService {
 	rpc BidiStream(stream BidiStreamRequest) returns (stream BidiStreamResponse) {}
 }
 
+message TodoItem {
+	string text = 1;
+	string tags = 2;
+}
+
 message CallRequest {
 	string name = 1;
 }

@@ -1,16 +1,17 @@
 package main
 
 import (
+	"go-micro.dev/v4"
+	log "go-micro.dev/v4/logger"
+
 	natsb "github.com/go-micro/plugins/v4/broker/nats"
 	natsr "github.com/go-micro/plugins/v4/registry/nats"
 	natst "github.com/go-micro/plugins/v4/transport/nats"
 
 	TodoController "todo-service/controllers"
 	"todo-service/handler"
+	Schema "todo-service/models"
 	pb "todo-service/proto"
-
-	"go-micro.dev/v4"
-	log "go-micro.dev/v4/logger"
 )
 
 var (
@@ -20,7 +21,6 @@ var (
 
 func main() {
 	// Create service
-	// Create service
 	srv := micro.NewService(
 		micro.Name(service),
 		micro.Version(version),
@@ -29,13 +29,12 @@ func main() {
 		micro.Transport(natst.NewTransport()),
 	)
 	srv.Init()
-
-	TodoController.InitDB()
-
-	// Register handler
-	pb.RegisterTodoServiceHandler(srv.Server(), new(handler.TodoService))
-	// Run service
 	if err := srv.Run(); err != nil {
 		log.Fatal(err)
 	}
+	pb.RegisterTodoServiceHandler(srv.Server(), new(handler.TodoService))
+	TodoController.InitializeDB()
+	TodoController.CreateNewItem(Schema.TodoItem{Text: "Read some stuff", Status: "in-progress", Tags: "reading, writing"})
+	TodoController.UpdateItemStatus(14, "done")
+	TodoController.GetAllItems()
 }

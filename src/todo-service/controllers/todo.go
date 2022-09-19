@@ -1,33 +1,49 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+	Schema "todo-service/models"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type TodoItem struct {
+type TodoItemDB struct {
 	gorm.Model
-	Text   string
-	Status string
+	Item Schema.TodoItem `gorm:"embedded"`
 }
 
-func InitDB() {
+var dbInstance *gorm.DB = nil
 
+func InitializeDB() (instance *gorm.DB) {
 	dsn := "host=localhost user=admin password=admin dbname=todo port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dbInstance = db
 	if err != nil {
 		fmt.Println("[todo][database] Database connection error:", err)
 	}
-
+	dbInstance.Debug().AutoMigrate(&TodoItemDB{})
 	fmt.Println("[database] Connection to DB Sucessful !")
+	return dbInstance
+}
 
-	db.AutoMigrate(&TodoItem{})
+func CreateNewItem(item Schema.TodoItem) (status bool, err error) {
+	dbInstance.Create(&TodoItemDB{Item: item})
+	return true, nil
+}
 
-	// db.Where("text is NULL AND status is NULL").Delete(&TodoItem{})
+func UpdateItemStatus(itemId int, newStatus string) (status bool, err error) {
+	dbInstance.Model(TodoItemDB{}).Where("id = ?", itemId).Update("status", newStatus)
+	return true, nil
+}
 
-	// Add Some Items
-	db.Create(&TodoItem{Text: "Should read some stuff on go", Status: "new"})
-	db.Create(&TodoItem{Text: "Clean my garden", Status: "in-progress"})
-
+func GetAllItems() (items []TodoItemDB, err error) {
+	var allItems []TodoItemDB
+	dbInstance.Model(TodoItemDB{}).Find(&allItems)
+	for _, exact := range allItems {
+		obj, _ := json.Marshal(exact)
+		fmt.Println(string(obj))
+	}
+	return allItems, nil
 }
