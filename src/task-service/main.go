@@ -49,6 +49,5 @@ func main() {
 	if err := client.Call(context.Background(), req, res); err != nil {
 		fmt.Println("[error] Something went wrong:", err)
 	}
-
-	fmt.Println("End of main()")
+	fmt.Println(res.MsgType)
 }

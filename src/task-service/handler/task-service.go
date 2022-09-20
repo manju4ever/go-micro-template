@@ -25,13 +25,13 @@ func (e *TaskService) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.Cal
 }
 
 func (e *TaskService) CreateTodo(ctx context.Context, req *pb.TodoItem, rsp *pb.Status) error {
-	fmt.Println("[CreateTodo] Inside Create Handler !")
+	fmt.Println("[CreateTodo] Inside Create Handler")
 	dbInstance.Create(&p.TaskItem{
 		TaskItem: Model.TaskItem{
 			Text:  req.Text,
 			Color: req.Color,
 		},
 	})
-	rsp.MsgType = "Task Created Successfully !"
+	rsp.MsgType = "[CreateTodo] Task Created Successfully"
 	return nil
 }
