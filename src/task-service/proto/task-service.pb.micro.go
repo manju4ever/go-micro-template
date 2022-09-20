@@ -38,6 +38,7 @@ func NewTaskServiceEndpoints() []*api.Endpoint {
 type TaskService interface {
 	Call(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error)
 	CreateTodo(ctx context.Context, in *TodoItem, opts ...client.CallOption) (*Status, error)
+	GetAllTodos(ctx context.Context, in *Void, opts ...client.CallOption) (*TodoItems, error)
 }
 
 type taskService struct {
@@ -72,17 +73,29 @@ func (c *taskService) CreateTodo(ctx context.Context, in *TodoItem, opts ...clie
 	return out, nil
 }
 
+func (c *taskService) GetAllTodos(ctx context.Context, in *Void, opts ...client.CallOption) (*TodoItems, error) {
+	req := c.c.NewRequest(c.name, "TaskService.GetAllTodos", in)
+	out := new(TodoItems)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for TaskService service
 
 type TaskServiceHandler interface {
 	Call(context.Context, *CallRequest, *CallResponse) error
 	CreateTodo(context.Context, *TodoItem, *Status) error
+	GetAllTodos(context.Context, *Void, *TodoItems) error
 }
 
 func RegisterTaskServiceHandler(s server.Server, hdlr TaskServiceHandler, opts ...server.HandlerOption) error {
 	type taskService interface {
 		Call(ctx context.Context, in *CallRequest, out *CallResponse) error
 		CreateTodo(ctx context.Context, in *TodoItem, out *Status) error
+		GetAllTodos(ctx context.Context, in *Void, out *TodoItems) error
 	}
 	type TaskService struct {
 		taskService
@@ -101,4 +114,8 @@ func (h *taskServiceHandler) Call(ctx context.Context, in *CallRequest, out *Cal
 
 func (h *taskServiceHandler) CreateTodo(ctx context.Context, in *TodoItem, out *Status) error {
 	return h.TaskServiceHandler.CreateTodo(ctx, in, out)
+}
+
+func (h *taskServiceHandler) GetAllTodos(ctx context.Context, in *Void, out *TodoItems) error {
+	return h.TaskServiceHandler.GetAllTodos(ctx, in, out)
 }

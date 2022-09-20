@@ -7,11 +7,18 @@ option go_package = "./proto;taskservice";
 service TaskService {
 	rpc Call(CallRequest) returns (CallResponse) {}
 	rpc CreateTodo(TodoItem) returns (Status) {}
+	rpc GetAllTodos(Void) returns (TodoItems) {}
 }
+
+message Void {}
 
 message TodoItem {
 	string text = 1;
 	string color = 2;
+}
+
+message TodoItems {
+	repeated TodoItem items = 1;
 }
 
 message Status {

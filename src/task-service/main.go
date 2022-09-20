@@ -42,12 +42,15 @@ func main() {
 	// Some Wait Time Until The Service Starts !
 	time.Sleep(time.Second * 5)
 
-	client := srv.Client()
+	client := pb.NewTaskService("task-service", srv.Client())
 
-	req := client.NewRequest("task-service", "TaskService.CreateTodo", &pb.TodoItem{Text: "Read some stuff", Color: "Yellow"})
-	res := &pb.Status{}
-	if err := client.Call(context.Background(), req, res); err != nil {
+	//Create a New Todo
+	client.CreateTodo(context.Background(), &pb.TodoItem{Text: "Go Workout in Gym", Color: "Green"})
+
+	// Get All Todos
+	res, err := client.GetAllTodos(context.Background(), &pb.Void{})
+	if err != nil {
 		fmt.Println("[error] Something went wrong:", err)
 	}
-	fmt.Println(res.MsgType)
+	fmt.Println("Total Items In Database:", len(res.Items))
 }
