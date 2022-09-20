@@ -2,7 +2,7 @@ FROM golang:alpine AS builder
 
 # Set Go env
 ENV CGO_ENABLED=0 GOOS=linux
-WORKDIR /go/src/todo-service
+WORKDIR /go/src/task-service
 
 # Install dependencies
 RUN apk --update --no-cache add ca-certificates gcc libtool make musl-dev protoc git
@@ -21,6 +21,6 @@ RUN make proto tidy build
 FROM scratch
 
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
-COPY --from=builder /go/src/todo-service/todo-service /todo-service
-ENTRYPOINT ["/todo-service"]
+COPY --from=builder /go/src/task-service/task-service /task-service
+ENTRYPOINT ["/task-service"]
 CMD []

@@ -8,7 +8,7 @@ init:
 
 .PHONY: proto
 proto:
-	@protoc --proto_path=. --micro_out=. --go_out=:. proto/todo-service.proto
+	@protoc --proto_path=. --micro_out=. --go_out=:. proto/task-service.proto
 
 .PHONY: update
 update:
@@ -20,7 +20,7 @@ tidy:
 
 .PHONY: build
 build:
-	@go build -o todo-service *.go
+	@go build -o task-service *.go
 
 .PHONY: test
 test:
@@ -28,4 +28,4 @@ test:
 
 .PHONY: docker
 docker:
-	@docker build -t todo-service:latest .
+	@docker build -t task-service:latest .
