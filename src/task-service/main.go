@@ -7,10 +7,12 @@ import (
 	pb "task-service/proto"
 	"time"
 
-	ps "task-service/persistence"
-
 	"go-micro.dev/v4"
 	log "go-micro.dev/v4/logger"
+
+	natsb "github.com/go-micro/plugins/v4/broker/nats"
+	natsr "github.com/go-micro/plugins/v4/registry/nats"
+	natst "github.com/go-micro/plugins/v4/transport/nats"
 )
 
 var (
@@ -23,6 +25,9 @@ func main() {
 	srv := micro.NewService(
 		micro.Name(service),
 		micro.Version(version),
+		micro.Broker(natsb.NewBroker()),
+		micro.Registry(natsr.NewRegistry()),
+		micro.Transport(natst.NewTransport()),
 	)
 
 	srv.Init()
@@ -34,10 +39,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	p := ps.Persistence{}
-	p.InitializeDB()
-
-	time.Sleep(time.Second * 6)
+	// Some Wait Time Until The Service Starts !
+	time.Sleep(time.Second * 5)
 
 	client := srv.Client()
 
@@ -47,6 +50,5 @@ func main() {
 		fmt.Println("[error] Something went wrong:", err)
 	}
 
-	fmt.Println("I'm at the end !", res)
-
+	fmt.Println("End of main()")
 }

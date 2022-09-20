@@ -3,6 +3,9 @@ module task-service
 go 1.18
 
 require (
+	github.com/go-micro/plugins/v4/broker/nats v1.1.0
+	github.com/go-micro/plugins/v4/registry/nats v1.1.0
+	github.com/go-micro/plugins/v4/transport/nats v1.1.0
 	go-micro.dev/v4 v4.8.1
 	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/postgres v1.3.10
@@ -43,8 +46,14 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+	github.com/klauspost/compress v1.15.10 // indirect
 	github.com/miekg/dns v1.1.50 // indirect
+	github.com/minio/highwayhash v1.0.2 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
+	github.com/nats-io/jwt/v2 v2.3.0 // indirect
+	github.com/nats-io/nats.go v1.11.1-0.20210623165838-4b75fc59ae30 // indirect
+	github.com/nats-io/nkeys v0.3.0 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect

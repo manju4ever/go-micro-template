@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"fmt"
-	"time"
 
 	log "go-micro.dev/v4/logger"
 
@@ -15,6 +14,7 @@ import (
 )
 
 var ps = p.Persistence{}
+var dbInstance, _ = ps.InitializeDB()
 
 type TaskService struct{}
 
@@ -25,14 +25,13 @@ func (e *TaskService) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.Cal
 }
 
 func (e *TaskService) CreateTodo(ctx context.Context, req *pb.TodoItem, rsp *pb.Status) error {
-	fmt.Println("Inside The Handler")
-	fmt.Println(req.Text, req.Color)
-	dbInstance, _ := ps.InitializeDB()
-	time.Sleep(time.Second * 5)
-	dbInstance.Model(&p.TaskItem{}).Create(&Model.TaskItem{
-		Text:  "Read Some Book !",
-		Color: "Yellow",
+	fmt.Println("[CreateTodo] Inside Create Handler !")
+	dbInstance.Create(&p.TaskItem{
+		TaskItem: Model.TaskItem{
+			Text:  req.Text,
+			Color: req.Color,
+		},
 	})
-	rsp.MsgType = "Ok got it !"
+	rsp.MsgType = "Task Created Successfully !"
 	return nil
 }
